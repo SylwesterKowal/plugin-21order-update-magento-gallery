@@ -37,11 +37,15 @@ class QueueUpdateImagesToMagentoInitTask extends QueueTask
         try {
             $this->ProductStocksMagento = TableRegistry::get('Product.ProductStocksMagento');
             if ($products = $this->ProductStocksMagento->find()
-                ->contain(['ProductStocks.Products.Uploads'])->toArray()
+                ->contain(['ProductStocks.Products.Uploads'])
+                ->limit(1)
+                ->toArray()
             ) {
 
                 $updateImagesToMagento = new QueueUpdateImagesToMagentoTask();
 
+                debug($products);
+                
                 foreach ($products as $key => $product) {
                     if (isset($product->product_stock->product->uploads->name)
                         && isset($product->user_firm_store_id)
